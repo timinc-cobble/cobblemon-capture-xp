@@ -1,6 +1,7 @@
 modLoader = "kotlinforforge"
 loaderVersion = "[4,)"
 license = "MIT"
+issueTrackerURL="${modIssues}"
 
 [[mods]]
 modId = "${modId}"
@@ -8,6 +9,9 @@ version = "${modCobblemonVersion}-neoforge-${modMyVersion}"
 displayName = "${modName}"
 authors = "${modAuthor}"
 description = "${modDescription}"
+logoFile="${modId}_small.png"
+displayUrl="${modDiscord}"
+modUrl="${modSource}"
 
 [[dependencies.capture_xp]]
 modId = "minecraft"
