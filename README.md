@@ -2,11 +2,11 @@
 
 v1.7-PR1
 
-Modrinth (Unpublished)
+[Modrinth](https://modrinth.com/mod/cobblemon-capture-xp)
 
-CurseForge (Unpublished)
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/cobblemon-capture-xp)
 
-[GitHub](https://github.com/timinc-cobble/cobblemon-capture-xp-1.7)
+[GitHub](https://github.com/timinc-cobble/cobblemon-capture-xp)
 
 ## What if…
 
