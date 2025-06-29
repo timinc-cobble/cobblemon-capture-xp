@@ -1,0 +1,38 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "${modId}"
+version = "${modCobblemonVersion}-neoforge-${modMyVersion}"
+displayName = "${modName}"
+authors = "${modAuthor}"
+description = "${modDescription}"
+
+[[dependencies.capture_xp]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.capture_xp]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[21.1.66,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.capture_xp]]
+modId = "cobblemon"
+mandatory = true
+versionRange = "[1.7.0,1.8.0)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.capture_xp]]
+modId = "tim_core"
+mandatory = true
+versionRange = "1.7-neoforge-PR1"
+ordering = "NONE"
+side = "BOTH"

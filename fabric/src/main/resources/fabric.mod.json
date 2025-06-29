@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${modCobblemonVersion}-fabric-${modMyVersion}",
+  "name": "${modName}",
+  "description": "${modDescription}",
+  "authors": [
+    "${modAuthor}"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "us.timinc.mc.cobblemon.capturexp.fabric.CaptureXpFabric"
+      }
+    ]
+  },
+  "depends": {
+    "java": ">=21",
+    "minecraft": "1.21.1",
+    "fabric": "*",
+    "cobblemon": ">=1.7.0 <1.8.0",
+    "tim_core": "1.7-fabric-PR1"
+  }
+}
