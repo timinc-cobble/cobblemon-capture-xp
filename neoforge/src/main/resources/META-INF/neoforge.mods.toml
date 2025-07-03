@@ -13,30 +13,30 @@ logoFile="${modId}_small.png"
 displayUrl="${modDiscord}"
 modUrl="${modSource}"
 
-[[dependencies.capture_xp]]
+[[dependencies.${modId}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.21.1]"
+versionRange = "[${minecraft_version}]"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.capture_xp]]
+[[dependencies.${modId}]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[21.1.66,)"
+versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.capture_xp]]
+[[dependencies.${modId}]]
 modId = "cobblemon"
 mandatory = true
-versionRange = "[1.7.0,1.8.0)"
+versionRange = "[${cobblemon_version}]"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.capture_xp]]
+[[dependencies.${modId}]]
 modId = "tim_core"
 mandatory = true
-versionRange = "1.7-neoforge-PR1"
+versionRange = "${tim_core_neoforge_version}"
 ordering = "NONE"
 side = "BOTH"

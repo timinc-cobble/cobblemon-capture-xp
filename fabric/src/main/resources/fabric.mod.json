@@ -19,10 +19,10 @@
   },
   "depends": {
     "java": ">=21",
-    "minecraft": "1.21.1",
+    "minecraft": "${minecraft_version}",
     "fabric": "*",
-    "cobblemon": ">=1.7.0 <1.8.0",
-    "tim_core": "1.7-fabric-PR1"
+    "cobblemon": "${cobblemon_version}",
+    "tim_core": "${tim_core_fabric_version}"
   },
   "contact": {
     "homepage": "${modDiscord}",

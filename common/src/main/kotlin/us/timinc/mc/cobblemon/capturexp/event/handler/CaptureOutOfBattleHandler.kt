@@ -3,10 +3,9 @@ package us.timinc.mc.cobblemon.capturexp.event.handler
 import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource
-import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import com.cobblemon.mod.common.pokemon.OriginalTrainerType
-import com.cobblemon.mod.common.pokemon.requirements.LevelRequirement
+import com.cobblemon.mod.common.pokemon.evolution.requirements.LevelRequirement
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.config
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.debugger
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.modId
@@ -71,11 +70,7 @@ object CaptureOutOfBattleHandler {
 
                 caseDebugger.debug("Granting ${playerMon.getIdentifier()} $grantedEvs EVs.")
 
-                grantedEvs.forEach { (k, v) ->
-                    playerMon.evs.add(
-                        k, v, SidemodEvSource(modId, playerMon)
-                    )
-                }
+                grantedEvs.forEach(playerMon.evs::add)
             }
         }
     }

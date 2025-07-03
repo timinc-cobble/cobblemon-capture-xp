@@ -39,7 +39,7 @@ dependencies {
         exclude("net.neoforged.fancymodloader", "loader")
     }
     // TOOD: Change to Modrinth maven.
-    modImplementation("curse.maven:cobblemon-tim-core-1295910:6706518")
+    modImplementation(files("libs/timcore-neoforge-1.6.1-1.0.0.jar"))
 
     implementation(project(":common", configuration = "namedElements"))
     "developmentNeoForge"(project(":common", configuration = "namedElements")) {

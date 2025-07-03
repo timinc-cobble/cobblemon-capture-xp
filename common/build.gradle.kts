@@ -17,7 +17,7 @@ dependencies {
     modImplementation("com.cobblemon:mod:${property("cobblemon_version")}") { isTransitive = false }
 
     // TODO: Change to Modrinth maven.
-    modImplementation("curse.maven:cobblemon-tim-core-1295910:6706517")
+    modImplementation(files("libs/common-1.6.1-1.0.0.jar"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit_version")}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")

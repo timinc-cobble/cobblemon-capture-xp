@@ -2,11 +2,9 @@ package us.timinc.mc.cobblemon.capturexp.event.handler
 
 import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent
-import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.config
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.debugger
-import us.timinc.mc.cobblemon.capturexp.CaptureXp.modId
 import us.timinc.mc.cobblemon.timcore.getIdentifier
 
 object CaptureInBattleHandler {
@@ -41,11 +39,7 @@ object CaptureInBattleHandler {
 
                     caseDebugger.debug("Granting ${opponentMon.effectedPokemon.getIdentifier()} $grantedEvs EVs.")
 
-                    grantedEvs.forEach { (k, v) ->
-                        opponentMon.effectedPokemon.evs.add(
-                            k, v, SidemodEvSource(modId, opponentMon.effectedPokemon)
-                        )
-                    }
+                    grantedEvs.forEach(opponentMon.effectedPokemon.evs::add)
                 }
             }
         }
