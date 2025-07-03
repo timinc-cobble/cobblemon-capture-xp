@@ -1,6 +1,6 @@
 # Capture XP
 
-v1.7-PR1
+v1.6-1.2.0
 
 [Modrinth](https://modrinth.com/mod/cobblemon-capture-xp)
 
@@ -31,7 +31,7 @@ Add Capture XP to your game, load into a world, and make sure you have at least 
 
 ## Player Help
 
-[Config Options](https://www.notion.so/Config-Options-21d57e0d4afd806f8a2fd707e1256579?pvs=21)
+[Config Options](https://www.notion.so/Config-Options-22557e0d4afd810cae43ce25f091d893?pvs=21)
 
 ## Roadmap
 
