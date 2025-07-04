@@ -1,4 +1,4 @@
-package us.timinc.mc.cobblemon.capturexp.event.handler
+package us.timinc.mc.cobblemon.capturexp.handler
 
 import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent

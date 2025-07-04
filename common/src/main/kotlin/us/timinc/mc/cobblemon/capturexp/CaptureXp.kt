@@ -1,11 +1,11 @@
 package us.timinc.mc.cobblemon.capturexp
 
 import com.cobblemon.mod.common.api.Priority
-import us.timinc.mc.cobblemon.capturexp.event.CaptureXpEvents
-import us.timinc.mc.cobblemon.capturexp.event.handler.CaptureInBattleHandler
-import us.timinc.mc.cobblemon.capturexp.event.handler.CaptureOutOfBattleHandler
+import us.timinc.mc.cobblemon.capturexp.handler.CaptureInBattleHandler
+import us.timinc.mc.cobblemon.capturexp.handler.CaptureOutOfBattleHandler
 import us.timinc.mc.cobblemon.timcore.AbstractConfig
 import us.timinc.mc.cobblemon.timcore.AbstractMod
+import us.timinc.mc.cobblemon.timcore.TimCoreEvents
 
 const val MOD_ID: String = "capture_xp"
 
@@ -22,7 +22,7 @@ object CaptureXp : AbstractMod<CaptureXp.CaptureXpConfig>(MOD_ID, CaptureXpConfi
     }
 
     init {
-        CaptureXpEvents.POKEMON_CAPTURED_IN_BATTLE.subscribe(Priority.LOWEST, CaptureInBattleHandler::handle)
-        CaptureXpEvents.POKEMON_CAPTURE_OUT_OF_BATTLE.subscribe(Priority.LOWEST, CaptureOutOfBattleHandler::handle)
+        TimCoreEvents.POKEMON_CAPTURED_IN_BATTLE.subscribe(Priority.LOWEST, CaptureInBattleHandler::handle)
+        TimCoreEvents.POKEMON_CAPTURED_OUT_OF_BATTLE.subscribe(Priority.LOWEST, CaptureOutOfBattleHandler::handle)
     }
 }
