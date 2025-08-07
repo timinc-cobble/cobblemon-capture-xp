@@ -38,8 +38,6 @@ dependencies {
     forgeRuntimeLibrary("thedarkcolour:kotlinforforge-neoforge:${property("kotlin_for_forge_version")}") {
         exclude("net.neoforged.fancymodloader", "loader")
     }
-    // TOOD: Change to Modrinth maven.
-    modImplementation(files("libs/timcore-neoforge-1.6.1-1.0.0.jar"))
 
     implementation(project(":common", configuration = "namedElements"))
     "developmentNeoForge"(project(":common", configuration = "namedElements")) {
@@ -49,6 +47,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit_version")}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")
+
+    modImplementation("maven.modrinth:cobblemon-tim-core:${property("tim_core_neoforge_version")}")
 }
 
 tasks.getByName<Test>("test") {

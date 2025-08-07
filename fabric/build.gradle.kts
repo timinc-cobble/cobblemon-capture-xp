@@ -38,8 +38,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit_version")}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")
 
-    // TOOD: Change to Modrinth maven.
-    modImplementation(files("libs/timcore-fabric-1.6.1-1.0.0.jar"))
+    modImplementation("maven.modrinth:cobblemon-tim-core:${property("tim_core_fabric_version")}")
 }
 
 tasks.getByName<Test>("test") {
