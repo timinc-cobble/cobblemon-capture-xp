@@ -1,6 +1,6 @@
 # Capture XP
 
-v1.6-1.2.0
+v1.6.1-1.2.0
 
 [Modrinth](https://modrinth.com/mod/cobblemon-capture-xp)
 
@@ -18,12 +18,12 @@ v1.6-1.2.0
 - You can modify the percentage experience received.
 - Optionally, your team can gain EVs from captures as well.
 - Works both in and out of battle, with individual options for both.
+- Comes with a built-in ExpAll option, split between in-battle and out-of-battle.
 
 ## Dependencies
 
 - [Cobblemon](https://www.notion.so/Cobblemon-22157e0d4afd80a49896c70a775a3c7f?pvs=21)
-- [Cobblemon Tim Core](https://www.notion.so/Tim-Core-22057e0d4afd809b9c02e78f26805376?pvs=21)
-- [Fabric Language Kotlin](https://www.notion.so/Fabric-Language-Kotlin-22157e0d4afd80b69919e8540208081b?pvs=21)/[Kotlin for Forge](https://www.notion.so/Kotlin-For-Forge-22157e0d4afd80799f2dd0a63e8ecdbb?pvs=21)
+- [Tim Core](https://www.notion.so/Tim-Core-22057e0d4afd809b9c02e78f26805376?pvs=21)
 
 ## Testing
 
