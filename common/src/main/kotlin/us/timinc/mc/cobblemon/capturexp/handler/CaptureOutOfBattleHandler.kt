@@ -10,6 +10,7 @@ import us.timinc.mc.cobblemon.capturexp.CaptureXp.config
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.debugger
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.modId
 import us.timinc.mc.cobblemon.timcore.getIdentifier
+import us.timinc.mc.cobblemon.timcore.hasExpAllFor
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -25,7 +26,8 @@ object CaptureOutOfBattleHandler {
         caseDebugger.debug("${event.player.uuid} captured ${opponentPokemon.getIdentifier()} out of battle.")
 
         val playerMons = playerParty.filter {
-            it != event.pokemon && it.currentHealth > 0 && (config.outOfBattleExpAll || it.uuid == first.uuid || it.heldItem()
+            it != event.pokemon && it.currentHealth > 0 && ((config.outOfBattleExpAll && it.getOwnerPlayer()
+                ?.hasExpAllFor(it) == true) || it.uuid == first.uuid || it.heldItem()
                 .`is`(CobblemonItemTags.EXPERIENCE_SHARE))
         }
         playerMons.forEach { playerMon ->

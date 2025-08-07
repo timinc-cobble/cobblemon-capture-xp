@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.config
 import us.timinc.mc.cobblemon.capturexp.CaptureXp.debugger
 import us.timinc.mc.cobblemon.timcore.getIdentifier
+import us.timinc.mc.cobblemon.timcore.hasExpAllFor
 
 object CaptureInBattleHandler {
     fun handle(event: PokemonCapturedEvent) {
@@ -19,7 +20,8 @@ object CaptureInBattleHandler {
 
         caughtBattleMonActor.getSide().getOppositeSide().actors.forEach { opponentActor ->
             opponentActor.pokemonList.filter {
-                it.health > 0 && (config.inBattleExpAll || caughtBattleMon.facedOpponents.contains(it) || it.effectedPokemon.heldItem()
+                it.health > 0 && ((config.inBattleExpAll && it.effectedPokemon.getOwnerPlayer()
+                    ?.hasExpAllFor(it.effectedPokemon) == true) || caughtBattleMon.facedOpponents.contains(it) || it.effectedPokemon.heldItem()
                     .`is`(CobblemonItemTags.EXPERIENCE_SHARE))
             }.forEach { opponentMon ->
                 val xpShareOnly = !caughtBattleMon.facedOpponents.contains(opponentMon)
