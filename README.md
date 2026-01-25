@@ -1,6 +1,6 @@
 # Capture XP
 
-v1.7.1-1.3.0
+v1.7.2-1.3.0
 
 [Modrinth](https://modrinth.com/mod/cobblemon-capture-xp)
 
@@ -31,7 +31,11 @@ Add Capture XP to your game, load into a world, and make sure you have at least 
 
 ## Player Help
 
-[Config Options](https://www.notion.so/Config-Options-22557e0d4afd810cae43ce25f091d893?pvs=21)
+[Config Options](https://www.notion.so/Config-Options-2f357e0d4afd815890beede2b466cd15?pvs=21)
+
+## Known Issues
+
+- v1.6.1-1.2.0 of the NeoForge version of the mod has a fatal error because I missed a comma in the dependency list. Please update to v1.6.1-1.2.1 and do not use v1.6.1-1.2.0 for NeoForge. The Fabric version of v1.6.1-1.2.0 is fine.
 
 ## Roadmap
 
