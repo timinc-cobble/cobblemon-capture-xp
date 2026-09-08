@@ -39,6 +39,18 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")
 
     modImplementation("maven.modrinth:cobblemon-tim-core:${property("tim_core_fabric_version")}")
+
+    // GraalVM polyglot (provides HostAccess) for Showdown
+    modRuntimeOnly("org.graalvm.sdk:graal-sdk:22.3.0")
+    // Truffle API (required by Graal for language/polyglot support)
+    modRuntimeOnly("org.graalvm.truffle:truffle-api:22.3.0")
+    // GraalJS runtime (provides JS language implementation)
+    modRuntimeOnly("org.graalvm.js:js:22.3.0")
+    // Graal regular expression engine used by GraalJS
+    modRuntimeOnly("org.graalvm.regex:regex:22.3.0")
+    // Unicode support used by Cobblemon's Showdown service
+    modRuntimeOnly("com.ibm.icu:icu4j:71.1")
+    minecraftServerLibraries("com.ibm.icu:icu4j:71.1")
 }
 
 tasks.getByName<Test>("test") {

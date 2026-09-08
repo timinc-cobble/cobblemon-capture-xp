@@ -15,10 +15,12 @@ object CaptureXp : AbstractMod<CaptureXp.CaptureXpConfig>(MOD_ID, CaptureXpConfi
         val inBattleExpAll: Boolean = false
         val inBattleExpMultiplier = 1.0
         val inBattleGrantEvs = false
+        val inBattleAwardExperienceToFaintedPokemon = false
 
         val outOfBattleExpAll: Boolean = false
         val outOfBattleExpMultiplier = 1.0
         val outOfBattleGrantEvs = false
+        val outOfBattleAwardExperienceToFaintedPokemon = false
     }
 
     init {
