@@ -15,15 +15,18 @@ object CaptureInBattleHandler {
         val caseDebugger = debugger.getCaseDebugger()
 
         val battle = Cobblemon.battleRegistry.getBattleByParticipatingPlayer(event.player) ?: return
-        val caughtBattleMonActor = battle.actors.find { it.uuid == event.pokemon.uuid } ?: return
-        val caughtBattleMon = caughtBattleMonActor.pokemonList.find { it.uuid == event.pokemon.uuid } ?: return
+        val caughtBattleMon = battle.actors.flatMap { it.pokemonList }.find { it.uuid == event.pokemon.uuid } ?: return
+        val caughtBattleMonActor = caughtBattleMon.actor
 
         caseDebugger.debug("Battle ${battle.battleId} resulted in wild Pokémon ${caughtBattleMon.effectedPokemon.getIdentifier()} being captured.")
 
         caughtBattleMonActor.getSide().getOppositeSide().actors.forEach { opponentActor ->
             opponentActor.pokemonList.filter {
-                it.health > 0 && ((config.inBattleExpAll && it.effectedPokemon.getOwnerPlayer()
-                    ?.hasExpAllFor(it.effectedPokemon) == true) || caughtBattleMon.facedOpponents.contains(it) || it.effectedPokemon.heldItem()
+                (it.health > 0 || config.inBattleAwardExperienceToFaintedPokemon)
+                        && ((config.inBattleExpAll && it.effectedPokemon.getOwnerPlayer()
+                    ?.hasExpAllFor(it.effectedPokemon) == true)
+                        || caughtBattleMon.facedOpponents.contains(it)
+                        || it.effectedPokemon.heldItem()
                     .`is`(CobblemonItemTags.EXPERIENCE_SHARE))
             }.forEach { opponentMon ->
                 val xpShareOnly = !caughtBattleMon.facedOpponents.contains(opponentMon)
@@ -47,7 +50,7 @@ object CaptureInBattleHandler {
                         opponentMon.effectedPokemon.evs.add(
                             k,
                             v,
-                            SidemodEvSource(CaptureXp.modId, caughtBattleMon.effectedPokemon)
+                            SidemodEvSource(CaptureXp.modId, opponentMon.effectedPokemon)
                         )
                     }
                 }

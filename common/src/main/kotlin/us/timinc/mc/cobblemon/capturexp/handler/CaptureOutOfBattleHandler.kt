@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource
 import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags
+import com.cobblemon.mod.common.battles.pokemon.BattlePokemon
 import com.cobblemon.mod.common.pokemon.OriginalTrainerType
 import com.cobblemon.mod.common.pokemon.requirements.LevelRequirement
 import us.timinc.mc.cobblemon.capturexp.CaptureXp
@@ -23,12 +24,18 @@ object CaptureOutOfBattleHandler {
         val opponentPokemon = event.pokemon
         val playerParty = Cobblemon.storage.getParty(event.player)
         val source = SidemodExperienceSource(modId)
-        val first = playerParty.firstOrNull { it != event.pokemon && it.currentHealth > 0 } ?: return
+        val first =
+            playerParty.firstOrNull {
+                it != event.pokemon
+                        && (it.currentHealth > 0 || config.outOfBattleAwardExperienceToFaintedPokemon)
+            }
+                ?: return
 
         caseDebugger.debug("${event.player.uuid} captured ${opponentPokemon.getIdentifier()} out of battle.")
 
         val playerMons = playerParty.filter {
-            it != event.pokemon && it.currentHealth > 0 && ((config.outOfBattleExpAll && it.getOwnerPlayer()
+            it != event.pokemon && (it.currentHealth > 0 || config.outOfBattleAwardExperienceToFaintedPokemon)
+                    && ((config.outOfBattleExpAll && it.getOwnerPlayer()
                 ?.hasExpAllFor(it) == true) || it.uuid == first.uuid || it.heldItem()
                 .`is`(CobblemonItemTags.EXPERIENCE_SHARE))
         }
@@ -47,9 +54,9 @@ object CaptureOutOfBattleHandler {
 
             val term4 = term1 * term2 * term3 + 1
 
-            val isNonOt =
-                playerMon.originalTrainerType == OriginalTrainerType.PLAYER && playerMon.originalTrainer != event.player.uuid.toString()
-            val nonOtBonus = if (isNonOt) 1.5 else 1.0
+            val isOriginalTrainer =
+                playerMon.originalTrainerType == OriginalTrainerType.PLAYER && playerMon.originalTrainer == event.player.uuid.toString()
+            val nonOtBonus = if (isOriginalTrainer) 1.0 else 1.5
             val hasLuckyEgg = playerMon.heldItem().`is`(CobblemonItemTags.LUCKY_EGG)
             val luckyEggBonus = if (hasLuckyEgg) Cobblemon.config.luckyEggMultiplier else 1.0
             val isAffectionate = playerMon.friendship >= 220
@@ -70,7 +77,10 @@ object CaptureOutOfBattleHandler {
             playerMon.addExperienceWithPlayer(event.player, source, experience)
 
             if (config.outOfBattleGrantEvs) {
-                val grantedEvs = opponentPokemon.form.evYield
+                val grantedEvs = Cobblemon.evYieldCalculator.calculate(
+                    BattlePokemon(playerMon),
+                    BattlePokemon(opponentPokemon)
+                )
 
                 caseDebugger.debug("Granting ${playerMon.getIdentifier()} $grantedEvs EVs.")
 
@@ -78,7 +88,7 @@ object CaptureOutOfBattleHandler {
                     playerMon.evs.add(
                         k,
                         v,
-                        SidemodEvSource(CaptureXp.modId, opponentPokemon)
+                        SidemodEvSource(CaptureXp.modId, playerMon)
                     )
                 }
             }
