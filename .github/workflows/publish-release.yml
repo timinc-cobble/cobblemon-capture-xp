@@ -1,0 +1,224 @@
+name: Publish mod release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mod-release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare release JARs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+
+    steps:
+      - name: Download and select release assets
+        id: select
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          ASSET_PATTERN: ${{ vars.PUBLISH_ASSET_PATTERN }}
+          MOD_PRETTY_NAME: ${{ vars.MOD_PRETTY_NAME }}
+        run: |
+          set -euo pipefail
+
+          [[ -n "$MOD_PRETTY_NAME" ]] || {
+            echo "::error::Repository variable MOD_PRETTY_NAME is not configured."
+            exit 1
+          }
+
+          pattern="${ASSET_PATTERN:-*.jar}"
+          mkdir -p release-assets publish
+
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --dir release-assets \
+            --pattern "$pattern"
+
+          shopt -s nullglob nocaseglob
+          for asset in release-assets/*.jar; do
+            filename="${asset##*/}"
+            case "${filename,,}" in
+              *-dev.jar|*-dev-shadow.jar|*-javadoc.jar|*-shadow.jar|*-slim.jar|*-sources.jar)
+                echo "Ignoring non-release JAR: $filename"
+                ;;
+              *)
+                cp "$asset" "publish/$filename"
+                ;;
+            esac
+          done
+
+          jars=(publish/*.jar)
+          if (( ${#jars[@]} == 0 )); then
+            echo "::error::No publishable JAR assets were found on release $RELEASE_TAG."
+            echo "::error::Attach a release JAR or set PUBLISH_ASSET_PATTERN to a matching glob."
+            exit 1
+          fi
+
+          echo "Publishing ${#jars[@]} release JAR(s):"
+          printf '  %s\n' "${jars[@]#publish/}"
+
+          matrix='{"include":[]}'
+          for jar in "${jars[@]}"; do
+            filename="${jar#publish/}"
+            stem="${filename%.jar}"
+            IFS='-' read -r -a tokens <<< "$stem"
+            token_count="${#tokens[@]}"
+
+            loader=""
+            loader_index=-1
+            for index in "${!tokens[@]}"; do
+              candidate="${tokens[$index],,}"
+              case "$candidate" in
+                fabric|forge|neoforge|quilt)
+                  loader="$candidate"
+                  loader_index="$index"
+                  break
+                  ;;
+              esac
+            done
+
+            if (( loader_index < 0 || token_count < 3 )); then
+              echo "::error file=$filename::Could not find a supported loader token in the JAR filename."
+              exit 1
+            fi
+
+            mod_version="${tokens[$((token_count - 1))]}"
+            if (( loader_index == token_count - 3 )); then
+              cobblemon_version="${tokens[$((loader_index + 1))]}"
+            elif (( loader_index == token_count - 2 )); then
+              cobblemon_version="${tokens[$((loader_index - 1))]}"
+            else
+              echo "::error file=$filename::Expected the loader next to the final Cobblemon and mod version tokens."
+              exit 1
+            fi
+
+            version_number="${cobblemon_version}-${loader}-${mod_version}"
+            version_name="${MOD_PRETTY_NAME} ${version_number}"
+
+            matrix="$(
+              jq -c \
+                --arg file "$filename" \
+                --arg loader "$loader" \
+                --arg version "$version_number" \
+                --arg modrinth_name "$version_name" \
+                '.include += [{
+                  file: $file,
+                  loader: $loader,
+                  version: $version,
+                  modrinth_name: $modrinth_name
+                }]' <<< "$matrix"
+            )"
+          done
+
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve selected JARs for publisher jobs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-jars
+          path: publish/*.jar
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+  publish-modrinth:
+    name: Publish ${{ matrix.loader }} to Modrinth
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - name: Validate Modrinth configuration
+        shell: bash
+        env:
+          PROJECT_ID: ${{ vars.MODRINTH_PROJECT_ID }}
+          PLATFORM_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          set -euo pipefail
+          [[ -n "$PROJECT_ID" ]] || {
+            echo "::error::Repository variable MODRINTH_PROJECT_ID is not configured."
+            exit 1
+          }
+          [[ -n "$PLATFORM_TOKEN" ]] || {
+            echo "::error::Repository secret MODRINTH_TOKEN is not configured."
+            exit 1
+          }
+
+      - name: Restore release JARs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-jars
+          path: publish
+
+      - name: Publish to Modrinth
+        uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075 # v3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-files: publish/${{ matrix.file }}
+          modrinth-name: ${{ matrix.modrinth_name }}
+          modrinth-version: ${{ matrix.version }}
+          modrinth-loaders: ${{ matrix.loader }}
+          modrinth-dependencies: ${{ vars.PUBLISH_DEPENDENCIES }}
+          modrinth-version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+          modrinth-unfeature-mode: subset
+          fail-mode: fail
+          retry-attempts: 2
+
+  publish-curseforge:
+    name: Publish ${{ matrix.loader }} to CurseForge
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - name: Validate CurseForge configuration
+        shell: bash
+        env:
+          PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          PLATFORM_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+        run: |
+          set -euo pipefail
+          [[ -n "$PROJECT_ID" ]] || {
+            echo "::error::Repository variable CURSEFORGE_PROJECT_ID is not configured."
+            exit 1
+          }
+          [[ -n "$PLATFORM_TOKEN" ]] || {
+            echo "::error::Repository secret CURSEFORGE_TOKEN is not configured."
+            exit 1
+          }
+
+      - name: Restore release JARs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-jars
+          path: publish
+
+      - name: Publish to CurseForge
+        uses: Kira-NT/mc-publish@52307b03863581dec6b652b83e597aec02ebb075 # v3
+        with:
+          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-files: publish/${{ matrix.file }}
+          curseforge-name: ${{ matrix.file }}
+          curseforge-loaders: ${{ matrix.loader }}
+          curseforge-dependencies: ${{ vars.PUBLISH_DEPENDENCIES }}
+          curseforge-version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+          fail-mode: fail
+          retry-attempts: 2
