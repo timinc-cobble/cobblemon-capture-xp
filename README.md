@@ -1,6 +1,6 @@
 # Capture XP
 
-v1.8.0-1.3.0
+v1.8.2-1.3
 
 [Modrinth](https://modrinth.com/mod/cobblemon-capture-xp)
 

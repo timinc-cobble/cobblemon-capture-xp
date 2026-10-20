@@ -24,7 +24,7 @@ object CaptureXp : AbstractMod<CaptureXp.CaptureXpConfig>(MOD_ID, CaptureXpConfi
     }
 
     init {
-        TimCoreEvents.POKEMON_CAPTURED_IN_BATTLE.subscribe(Priority.LOWEST, CaptureInBattleHandler::handle)
-        TimCoreEvents.POKEMON_CAPTURED_OUT_OF_BATTLE.subscribe(Priority.LOWEST, CaptureOutOfBattleHandler::handle)
+        TimCoreEvents.POKEMON_CAPTURED_IN_BATTLE.subscribe(Priority.NORMAL, CaptureInBattleHandler::handle)
+        TimCoreEvents.POKEMON_CAPTURED_OUT_OF_BATTLE.subscribe(Priority.NORMAL, CaptureOutOfBattleHandler::handle)
     }
 }
