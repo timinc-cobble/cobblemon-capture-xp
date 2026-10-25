@@ -3,8 +3,8 @@ plugins {
     id("java-library")
     kotlin("jvm") version("2.2.20")
 
-    id("dev.architectury.loom") version("1.11-SNAPSHOT") apply false
-    id("architectury-plugin") version("3.4-SNAPSHOT") apply false
+    id("dev.architectury.loom") version("1.11.458") apply false
+    id("architectury-plugin") version("3.4.164") apply false
 }
 
 allprojects {
